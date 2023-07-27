@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PeepoCharts</title>
+    <!-- VUE -->
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="line.js" defer></script>
+    <!-- BOOTSTRAP -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+    <!-- GOOGLE CHARTS -->
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <!-- STYLESHEET -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <section id="vue-mount">
+      <nav
+        class="navbar navbar-expand-sm navbar-dark bg-success mb-2 sticky-top"
+      >
+        <div class="container">
+          <a class="navbar-brand" href="index.html">PeepoCharts</a>
+          <button
+            class="navbar-toggler"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- ml-auto AND text-right -->
+            <ul class="navbar-nav ml-auto text-right">
+              <li class="nav-item">
+                <a class="nav-link" href="line.html">Line</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="donut.html">Donut</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="container">
+        <!-- DESCRIPTION -->
+        <div class="row">
+          <div class="col">
+            <h1>Line Charts</h1>
+            <p>
+              This website was inspired by the algorithm to generate
+              <strong style="color: purple">fake stock data.</strong>
+              With the help of other generous developers, I've managed to grab
+              some algorithm from
+              <a
+                target="_blank"
+                href="https://stackoverflow.com/questions/8597731/are-there-known-techniques-to-generate-realistic-looking-fake-stock-data"
+              >
+                StackOverflow here,
+              </a>
+              and decided to come up with this chart using Vue 3 and
+              <a
+                target="_blank"
+                href="https://developers.google.com/chart/interactive/docs/gallery/linechart"
+              >
+                Google line charts here.
+              </a>
+            </p>
+            <p>
+              You can hit F12, and go to Sources > line.js to see the full code.
+            </p>
+          </div>
+        </div>
+
+        <!-- ALGO CODE -->
+        <div class="row mt-2">
+          <div class="col-lg-2">
+            <button
+              class="btn btn-dark mb-2"
+              data-toggle="collapse"
+              data-target="#collapse-code"
+            >
+              See Algorithm
+            </button>
+          </div>
+          <div class="col-lg-10">
+            <pre class="bg-dark text-white rounded collapse" id="collapse-code">
+      //This code will be run for every data point and pushed to the algoArray
+      runStockAlgo(oldPrice) {
+        let rnd = Math.random(); // generate number, 0 <= x < 1.0
+        let changePercent = 2 * this.volatility * rnd;
+        if (changePercent > this.volatility) {
+          changePercent = changePercent - 2 * this.volatility;
+        }
+        let changeAmount = oldPrice * changePercent;
+        let newPrice = oldPrice + changeAmount;
+
+        return newPrice;
+      },
+
+      //After the algoArray is generated, the chart.draw(...) function will be called   
+            </pre>
+          </div>
+        </div>
+
+        <!-- MAIN CHART -->
+        <div class="row">
+          <div class="col">
+            <h3>Start price is set at {{startPrice}}</h3>
+            <h5>Current: {{ oldPriceRounded }} (Year: {{ year - 1 }})</h5>
+            <h5 class="text-success">
+              High: {{ highRounded }} (Year {{highYear}})
+            </h5>
+            <h5 class="text-danger">
+              Low: {{ lowRounded }} (Year {{lowYear}})
+            </h5>
+
+            <div class="form-group">
+              <label for="start-price">Start Price</label>
+              <input
+                class="form-control"
+                type="number"
+                id="start-price"
+                v-model.number="startPrice"
+              />
+            </div>
+
+            <div class="row">
+              <div class="col-sm-6 col-md-8">
+                <div class="form-group">
+                  <label for="vol">Volatility</label>
+                  <input
+                    class="form-control"
+                    id="vol"
+                    type="number"
+                    v-model="volatility"
+                  />
+                  <small class="text-muted">
+                    Stable stock volatility: 0.02
+                    <br />
+                    Unstable stock volatility: 0.1
+                  </small>
+                </div>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <button
+                  class="btn btn-primary btn-block"
+                  @click="volatility = 0.02"
+                >
+                  Stable (&#x25B2;)
+                </button>
+                <button
+                  class="btn btn-danger btn-block mb-2"
+                  @click="volatility = 0.1"
+                >
+                  Unstable (&#x25BC;)
+                </button>
+              </div>
+            </div>
+
+            <div class="btn-group d-flex d-sm-inline">
+              <button class="btn btn-info" @click="populateChart(20)">
+                <span class="d-none d-md-block">20 Years (Q)</span>
+                <span class="d-md-none">20</span>
+              </button>
+              <button class="btn btn-info" @click="populateChart(50)">
+                <span class="d-none d-md-block">50 Years (W)</span>
+                <span class="d-md-none">50</span>
+              </button>
+              <button class="btn btn-info" @click="populateChart(100)">
+                <span class="d-none d-md-block">100 Years (E)</span>
+                <span class="d-md-none">100</span>
+              </button>
+              <button class="btn btn-warning mr-sm-2" @click="resetChart">
+                Reset (R)
+              </button>
+            </div>
+
+            <div class="btn-group d-flex d-sm-inline">
+              <button
+                v-if="insertFlag"
+                class="btn btn-dark"
+                @click="insertData"
+              >
+                Insert (&#10148;)
+              </button>
+              <button
+                v-if="insertFlag && playFlag"
+                class="btn btn-primary"
+                @click="playData"
+              >
+                Play
+              </button>
+              <button
+                v-if="insertFlag && !playFlag"
+                class="btn btn-danger"
+                @click="stopData"
+              >
+                Stop
+              </button>
+            </div>
+
+            <!-- CHART IS DRAWN HERE -->
+            <div id="curve_chart" :style="{height: windowHeight}"></div>
+
+            <small>C: {{ oldPriceRounded }} ({{ year - 1 }})</small>
+            <small class="text-success ml-1">
+              H: {{ highRounded }} ({{ highYear }})
+            </small>
+            <small class="text-danger ml-1">
+              L: {{ lowRounded }} ({{ lowYear }})
+            </small>
+
+            <div style="margin-top: 20px"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 50px"></div>
+    </section>
+
+    <footer class="bg-success fixed-bottom">
+      <div class="container text-right text-white pb-1">
+        <small>Copyright © 2020 zschuah. All Rights Reserved.</small>
+      </div>
+    </footer>
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
+      integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

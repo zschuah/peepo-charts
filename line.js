@@ -199,3 +199,7 @@ const app = Vue.createApp({
   },
 });
 app.mount("#vue-mount");
+
+// To unhide section after script is loaded
+const section = document.querySelector("section");
+section.hidden = false;
